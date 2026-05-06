@@ -64,13 +64,3 @@ def finalizar_locacao(locacao_id: int):
 @app.patch("/api/locacoes/{locacao_id}/cancelar")
 def cancelar_locacao(locacao_id: int):
     return chamar_servico("locacoes", "PATCH", f"locacoes/{locacao_id}/cancelar")
-
-
-# ── Pagamentos ────────────────────────────────────────
-@app.get("/api/pagamentos")
-def listar_pagamentos():
-    return chamar_servico("pagamentos", "GET", "pagamentos")
-
-@app.post("/api/pagamentos/{pagamento_id}/pagar")
-def pagar(pagamento_id: int):
-    return chamar_servico("pagamentos", "POST", f"pagamentos/{pagamento_id}/pagar")
