@@ -16,7 +16,7 @@ def get_links(locacao_id: int, status: str) -> list:
         links.append({"rel": "finalizar", "href": f"{base}/finalizar", "method": "PATCH"})
 
     elif status in ("DEVOLVIDO", "DEVOLVIDO_ATRASADO"):
-        links.append({"rel": "pagamento", "href": f"{GATEWAY_URL}/api/pagamentos/?locacao_id={locacao_id}", "method": "GET"})
+        links.append({"rel": "deletar", "href": base, "method": "DELETE"})
 
     elif status == "CANCELADO":
         links.append({"rel": "deletar", "href": base, "method": "DELETE"})

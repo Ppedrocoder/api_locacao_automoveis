@@ -1,47 +1,71 @@
 from ninja import NinjaAPI
-from .schemas import VeiculoSchema
+from .schemas import VeiculoOutSchema, VeiculoSchema
 from .models import Veiculo
 from .hateoas import get_links_veiculo
+from django.shortcuts import get_object_or_404
 
 api = NinjaAPI()
 
-@api.get("/veiculos")
+@api.get("/veiculos", response=list[VeiculoOutSchema])
 def listar_veiculos(request):
     veiculos = Veiculo.objects.all()
     return [
         {
-            "id":          veiculo.id,
-            "modelo":      veiculo.modelo,
-            "marca":       veiculo.marca,
-            "status":      veiculo.status,
-            "tipo":        veiculo.tipo,
-            "_links":      get_links_veiculo(veiculo.id, veiculo.status)
+            "id":     veiculo.id,
+            "modelo": veiculo.modelo,
+            "marca":  veiculo.marca,
+            "status": veiculo.status,
+            "tipo":   veiculo.tipo,
+            "links":  get_links_veiculo(veiculo.id, veiculo.status)  # ← era "_links"
         }
         for veiculo in veiculos
     ]
 
-@api.post("/veiculos")
+@api.post("/veiculos", response=VeiculoOutSchema)
 def criar_veiculo(request, veiculo: VeiculoSchema):
-    novo_veiculo = Veiculo.objects.create(modelo=veiculo.modelo, marca=veiculo.marca, status=veiculo.status, tipo=veiculo.tipo)
-    return novo_veiculo
-
-@api.get("/veiculos/{veiculo_id}")
-def obter_veiculo(request, veiculo_id: int):
-    veiculo = Veiculo.objects.get(id=veiculo_id)
+    novo = Veiculo.objects.create(
+        modelo=veiculo.modelo,
+        marca=veiculo.marca,
+        tipo=veiculo.tipo
+    )
     return {
-        "id":          veiculo.id,
-        "modelo":      veiculo.modelo,
-        "marca":       veiculo.marca,
-        "status":      veiculo.status,
-        "tipo":        veiculo.tipo,
-        "_links":      get_links_veiculo(veiculo.id, veiculo.status)
+        "id":     novo.id,
+        "modelo": novo.modelo,
+        "marca":  novo.marca,
+        "status": novo.status,
+        "tipo":   novo.tipo,
+        "links":  get_links_veiculo(novo.id, novo.status)  # ← adiciona isso
     }
 
-@api.put("/veiculos/{veiculo_id}")
+@api.get("/veiculos/{veiculo_id}", response=VeiculoOutSchema)
+def obter_veiculo(request, veiculo_id: int):
+    veiculo = get_object_or_404(Veiculo, id=veiculo_id)  # ← retorna 404 corretamente
+    return {
+        "id":     veiculo.id,
+        "modelo": veiculo.modelo,
+        "marca":  veiculo.marca,
+        "status": veiculo.status,
+        "tipo":   veiculo.tipo,
+        "links":  get_links_veiculo(veiculo.id, veiculo.status)
+    }
+
+@api.put("/veiculos/{veiculo_id}", response=VeiculoOutSchema)
 def atualizar_veiculo(request, veiculo_id: int, veiculo: VeiculoSchema):
-    veiculo_atualizado = Veiculo.objects.filter(id=veiculo_id)
-    veiculo_atualizado.update(modelo=veiculo.modelo, marca=veiculo.marca, status=veiculo.status, tipo=veiculo.tipo)
-    return Veiculo.objects.get(id=veiculo_id)
+    Veiculo.objects.filter(id=veiculo_id).update(
+        modelo=veiculo.modelo,
+        marca=veiculo.marca,
+        status=veiculo.status,
+        tipo=veiculo.tipo
+    )
+    v = Veiculo.objects.get(id=veiculo_id)
+    return {
+        "id":     v.id,
+        "modelo": v.modelo,
+        "marca":  v.marca,
+        "status": v.status,
+        "tipo":   v.tipo,
+        "links":  get_links_veiculo(v.id, v.status)  # ← adiciona isso
+    }
 
 @api.delete("/veiculos/{veiculo_id}")
 def deletar_veiculo(request, veiculo_id: int):
