@@ -10,7 +10,7 @@
 
 3 - Rodar api gateway
 
-`python manage.py runserver` 
+`uvicorn gateway:app --port 8000 --reload` 
 
 4 - Rodar frontend
 

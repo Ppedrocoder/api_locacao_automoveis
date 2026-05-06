@@ -8,7 +8,6 @@ app = FastAPI(title="API Gateway")
 SERVICES = {
     "veiculos":   "http://localhost:8001",
     "locacoes":   "http://localhost:8002",
-    "pagamentos": "http://localhost:8003",
 }
 
 def chamar_servico(service: str, method: str, path: str, body=None, params=None):
