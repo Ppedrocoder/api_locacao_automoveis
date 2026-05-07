@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { FaEdit, FaWindowClose } from "react-icons/fa";
+import { FaEdit, FaWindowClose, FaAdjust } from "react-icons/fa";
 import './Tarefas.css';
 
-export default function Tarefas({ tarefas, handleEdit, handleDelete }){
+export default function Tarefas({ handleEdit, handleDelete, handleStatus }){
   return (
     <ul className="tarefas" >
       { tarefas.map((tarefa, index) => (
@@ -14,6 +14,12 @@ export default function Tarefas({ tarefas, handleEdit, handleDelete }){
               className="edit"
               onClick={
                 (evento) => handleEdit(evento, index)
+              }
+            />
+            <FaAdjust
+              className="alocacao"
+              onClick={
+                (evento) => handleStatus(evento)
               }
             />
             <FaWindowClose
