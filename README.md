@@ -14,4 +14,4 @@
 
 4 - Rodar frontend
 
-`npm run dev` 
+`npm start` 
