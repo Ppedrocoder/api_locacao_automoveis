@@ -1,107 +1,40 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import './Main.css';
-import Form from "./Form";
+import LocacaoForm from './LocacaoForm';
+import Locacoes from './Locacoes';
+import { listLocacoes } from '../api';
 
-import Tarefas from "./Tarefas";
+export default function Main() {
+  const [locacoes, setLocacoes] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-export default class Main extends Component {
-
-  state = {
-    novoCarro: '',
-    carros: [],
-    index: -1,
+  const fetchLocacoes = async () => {
+    setLoading(true);
+    try {
+      const data = await listLocacoes();
+      setLocacoes(data || []);
+    } catch (err) {
+      console.error('Erro ao listar locações', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  componentDidMount() {
-    const carros = JSON.parse(localStorage.getItem('carros'));
+  useEffect(() => {
+    fetchLocacoes();
+  }, []);
 
-    if (!carros){
-      return;
-    }
-    this.setState({ carros });
-  }
+  return (
+    <div className="main">
+      <h1>Locações</h1>
 
-  componentDidUpdate(prevProps, prevState) {
-    const { carros } = this.state;
+      <LocacaoForm onCreated={fetchLocacoes} />
 
-    if (carros === prevState.carros){
-      return;
-    }
-    localStorage.setItem('carros', JSON.stringify(carros));
-  }
-
-  handleSubmit = (evento) => {
-    evento.preventDefault();
-    //console.log("Oi");
-    const { carros, index } = this.state;
-    let { novoCarro } = this.state;
-    novoCarro = novaTarefa.trim();
-
-    if (carros.indexOf(novoCarro) !== -1){
-      return;
-    }
-    const novosCarros = [...carros];
-    if (index === -1) {
-      this.setState({
-        carros: [...novosCarros, novoCarro],
-        novoCarro: '',
-      });
-    } else {
-      novosCarros[index] = novoCarro;
-
-      this.setState({
-        carros: [...novosCarros],
-        index: -1,
-      });
-    }
-  }
-
-  handleDelete = (evento, index) => {
-    const { tarefas } = this.state;
-    const novasTarefas = [...tarefas];
-
-    novasTarefas.splice(index, 1);
-
-    this.setState({
-      tarefas: [...novasTarefas],
-    });
-
-    return;
-  }
-
-  handleEdit = (evento, index) => {
-    const { tarefas } = this.state;
-    this.setState({
-      index,
-      novaTarefa: tarefas[index],
-    });
-
-  }
-
-  handleChange = (evento) => {
-    this.setState({
-      novaTarefa: evento.target.value,
-    });
-  }
-
-  render() {
-    const { novaTarefa, tarefas } = this.state;
-    return (
-      <div className="main">
-        <h1>Lista de Tarefas</h1>
-
-        <Form
-        handleSubmit={ this.handleSubmit }
-        handleChange={ this.handleChange }
-        novaTarefa={ novaTarefa }
-        />
-
-        <Tarefas
-          tarefas={ tarefas }
-          handleEdit={ this.handleEdit }
-          handleDelete={ this.handleDelete }
-        />
-      </div>
-    );
-  }
+      <Locacoes
+        locacoes={locacoes}
+        loading={loading}
+        onRefresh={fetchLocacoes}
+      />
+    </div>
+  );
 }

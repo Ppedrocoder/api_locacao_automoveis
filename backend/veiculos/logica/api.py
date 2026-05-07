@@ -21,6 +21,21 @@ def listar_veiculos(request):
         for veiculo in veiculos
     ]
 
+@api.get("/veiculos/disponiveis", response=list[VeiculoOutSchema])
+def listar_veiculos_disponiveis(request):
+    veiculos = Veiculo.objects.filter(status='Disponível')
+    return [
+        {
+            "id":     veiculo.id,
+            "modelo": veiculo.modelo,
+            "marca":  veiculo.marca,
+            "status": veiculo.status,
+            "tipo":   veiculo.tipo,
+            "links":  get_links_veiculo(veiculo.id, veiculo.status)
+        }
+        for veiculo in veiculos
+    ]
+
 @api.post("/veiculos", response=VeiculoOutSchema)
 def criar_veiculo(request, veiculo: VeiculoSchema):
     novo = Veiculo.objects.create(
