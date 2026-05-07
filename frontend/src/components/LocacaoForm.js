@@ -62,36 +62,71 @@ export default function LocacaoForm({ onCreated }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{marginBottom:16}}>
-      <div>
-        <label>Cliente: </label>
-        <input value={cliente} onChange={e=>setCliente(e.target.value)} required />
+    <form className="locacao-form" onSubmit={handleSubmit}>
+      <div className="locacao-form__field">
+        <label className="locacao-form__label">Cliente</label>
+        <input
+          className="locacao-form__control"
+          value={cliente}
+          onChange={e => setCliente(e.target.value)}
+          required
+        />
       </div>
-      <div>
-        <label>Veículo: </label>
-        <button type="button" onClick={fetchVeiculos} disabled={loadingVeiculos} style={{marginLeft: 8, padding: '4px 8px', fontSize: '12px'}}>
-          {loadingVeiculos ? '...' : '⟲'}
-        </button>
+      <div className="locacao-form__field">
+        <div className="locacao-form__row">
+          <label className="locacao-form__label">Veículo</label>
+          <button
+            type="button"
+            className="locacao-form__reload"
+            onClick={fetchVeiculos}
+            disabled={loadingVeiculos}
+          >
+            {loadingVeiculos ? '...' : '⟲'}
+          </button>
+        </div>
         {loadingVeiculos ? (
-          <div>Carregando veículos...</div>
+          <div className="locacao-form__hint">Carregando veículos...</div>
         ) : (
-          <select value={veiculoId} onChange={e=>setVeiculoId(e.target.value)} required>
-            <option value="" disabled>Selecione um veículo</option>
+          <select
+            className="locacao-form__control"
+            value={veiculoId}
+            onChange={e => setVeiculoId(e.target.value)}
+            required
+          >
+            <option value="" disabled>
+              Selecione um veículo
+            </option>
             {veiculos.map((v) => (
-              <option key={v.id} value={v.id}>{v.marca} {v.modelo}</option>
+              <option key={v.id} value={v.id}>
+                {v.marca} {v.modelo}
+              </option>
             ))}
           </select>
         )}
       </div>
-      <div>
-        <label>Dia Inicial: </label>
-        <input value={diaInicial} onChange={e=>setDiaInicial(e.target.value)} required type="date" />
+      <div className="locacao-form__field">
+        <label className="locacao-form__label">Dia Inicial</label>
+        <input
+          className="locacao-form__control"
+          value={diaInicial}
+          onChange={e => setDiaInicial(e.target.value)}
+          required
+          type="date"
+        />
       </div>
-      <div>
-        <label>Dia Final: </label>
-        <input value={diaFinal} onChange={e=>setDiaFinal(e.target.value)} required type="date" />
+      <div className="locacao-form__field">
+        <label className="locacao-form__label">Dia Final</label>
+        <input
+          className="locacao-form__control"
+          value={diaFinal}
+          onChange={e => setDiaFinal(e.target.value)}
+          required
+          type="date"
+        />
       </div>
-      <button type="submit" disabled={saving}>{saving ? 'Salvando...' : 'Criar Locação'}</button>
+      <button className="locacao-form__submit" type="submit" disabled={saving}>
+        {saving ? 'Salvando...' : 'Criar Locação'}
+      </button>
     </form>
   );
 }

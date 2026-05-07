@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import LocacaoItem from './LocacaoItem';
 
 export default function Locacoes({ locacoes = [], loading, onRefresh }) {
-  if (loading) return <div>Carregando locações...</div>;
-  if (!locacoes || locacoes.length === 0) return <div>Sem locações.</div>;
+  if (loading) return <div className="locacoes__state">Carregando locações...</div>;
+  if (!locacoes || locacoes.length === 0) return <div className="locacoes__state">Sem locações.</div>;
 
   return (
-    <div>
+    <div className="locacoes">
       {locacoes.map(loc => (
         <LocacaoItem key={loc.id} locacao={loc} onRefresh={onRefresh} />
       ))}
