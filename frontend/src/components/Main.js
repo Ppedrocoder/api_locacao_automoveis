@@ -7,50 +7,50 @@ import Tarefas from "./Tarefas";
 export default class Main extends Component {
 
   state = {
-    novaTarefa: '',
-    tarefas: [],
+    novoCarro: '',
+    carros: [],
     index: -1,
   };
 
   componentDidMount() {
-    const tarefas = JSON.parse(localStorage.getItem('tarefas'));
+    const carros = JSON.parse(localStorage.getItem('carros'));
 
-    if (!tarefas){
+    if (!carros){
       return;
     }
-    this.setState({ tarefas });
+    this.setState({ carros });
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { tarefas } = this.state;
+    const { carros } = this.state;
 
-    if (tarefas === prevState.tarefas){
+    if (carros === prevState.carros){
       return;
     }
-    localStorage.setItem('tarefas', JSON.stringify(tarefas));
+    localStorage.setItem('carros', JSON.stringify(carros));
   }
 
   handleSubmit = (evento) => {
     evento.preventDefault();
     //console.log("Oi");
-    const { tarefas, index } = this.state;
-    let { novaTarefa } = this.state;
-    novaTarefa = novaTarefa.trim();
+    const { carros, index } = this.state;
+    let { novoCarro } = this.state;
+    novoCarro = novaTarefa.trim();
 
-    if (tarefas.indexOf(novaTarefa) !== -1){
+    if (carros.indexOf(novoCarro) !== -1){
       return;
     }
-    const novasTarefas = [...tarefas];
+    const novosCarros = [...carros];
     if (index === -1) {
       this.setState({
-        tarefas: [...novasTarefas, novaTarefa],
-        novaTarefa: '',
+        carros: [...novosCarros, novoCarro],
+        novoCarro: '',
       });
     } else {
-      novasTarefas[index] = novaTarefa;
+      novosCarros[index] = novoCarro;
 
       this.setState({
-        tarefas: [...novasTarefas],
+        carros: [...novosCarros],
         index: -1,
       });
     }
