@@ -66,7 +66,10 @@ export default function Main() {
         }
       };
 
-      
+      socket.onerror = (err) => {
+        if (!ativo) return;
+        console.error('WebSocket do relatório: erro', err);
+      };
 
       socket.onclose = () => {
         if (!ativo) {

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Documentação SOAP - Relatório de Locações</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; }
+    h1   { color: #333; }
+    h2   { color: #555; border-bottom: 1px solid #ddd; }
+    pre  { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    .tag { color: #007bff; }
+  </style>
+</head>
+<body>
+
+  <h1>API SOAP — Relatório de Locações</h1>
+  <p><strong>WSDL:</strong> <a href="http://localhost:9000/relatorio?wsdl">http://localhost:9000/relatorio?wsdl</a></p>
+  <p><strong>Endpoint:</strong> http://localhost:9000/relatorio</p>
+
+  <h2>Método: consultarRelatorio</h2>
+  <p>Retorna um relatório consolidado das locações, podendo filtrar por status.</p>
+
+  <h3>Request</h3>
+  <pre>
+&lt;soapenv:Envelope
+  xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:rel="http://relatorio.locacao"&gt;
+  &lt;soapenv:Body&gt;
+    &lt;rel:consultarRelatorioRequest&gt;
+      &lt;rel:status&gt;RESERVADO&lt;/rel:status&gt; &lt;!-- opcional --&gt;
+    &lt;/rel:consultarRelatorioRequest&gt;
+  &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;
+  </pre>
+
+  <h3>Parâmetros</h3>
+  <table border="1" cellpadding="8" style="border-collapse:collapse; width:100%">
+    <tr><th>Campo</th><th>Tipo</th><th>Obrigatório</th><th>Valores</th></tr>
+    <tr><td>status</td><td>string</td><td>Não</td><td>RESERVADO, EM_USO, DEVOLVIDO, DEVOLVIDO_ATRASADO, CANCELADO</td></tr>
+  </table>
+
+  <h3>Response</h3>
+  <pre>
+&lt;consultarRelatorioResponse&gt;
+  &lt;total&gt;10&lt;/total&gt;
+  &lt;reservados&gt;3&lt;/reservados&gt;
+  &lt;em_uso&gt;2&lt;/em_uso&gt;
+  &lt;devolvidos&gt;3&lt;/devolvidos&gt;
+  &lt;atrasados&gt;1&lt;/atrasados&gt;
+  &lt;cancelados&gt;1&lt;/cancelados&gt;
+&lt;/consultarRelatorioResponse&gt;
+  </pre>
+
+  <h3>Campos da resposta</h3>
+  <table border="1" cellpadding="8" style="border-collapse:collapse; width:100%">
+    <tr><th>Campo</th><th>Tipo</th><th>Descrição</th></tr>
+    <tr><td>total</td><td>int</td><td>Total de locações</td></tr>
+    <tr><td>reservados</td><td>int</td><td>Locações com status RESERVADO</td></tr>
+    <tr><td>em_uso</td><td>int</td><td>Locações com status EM_USO</td></tr>
+    <tr><td>devolvidos</td><td>int</td><td>Locações devolvidas no prazo</td></tr>
+    <tr><td>atrasados</td><td>int</td><td>Locações devolvidas com atraso</td></tr>
+    <tr><td>cancelados</td><td>int</td><td>Locações canceladas</td></tr>
+  </table>
+
+</body>
+</html>

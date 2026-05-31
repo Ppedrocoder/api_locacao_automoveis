@@ -5,17 +5,15 @@
   xmlns:tns="http://relatorio.locacao"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-  <!-- Tipos -->
   <types>
-    <xsd:schema>
-      <xsd:element name="consultarRelatorioRequest">
+    <xsd:schema targetNamespace="http://relatorio.locacao">
+      <xsd:element name="consultarRelatorio">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="status" type="xsd:string"/>
+            <xsd:element name="status" type="xsd:string" minOccurs="0"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
-
       <xsd:element name="consultarRelatorioResponse">
         <xsd:complexType>
           <xsd:sequence>
@@ -31,15 +29,13 @@
     </xsd:schema>
   </types>
 
-  <!-- Mensagens -->
   <message name="consultarRelatorioInput">
-    <part name="parameters" element="tns:consultarRelatorioRequest"/>
+    <part name="parameters" element="tns:consultarRelatorio"/>
   </message>
   <message name="consultarRelatorioOutput">
     <part name="parameters" element="tns:consultarRelatorioResponse"/>
   </message>
 
-  <!-- PortType -->
   <portType name="RelatorioPortType">
     <operation name="consultarRelatorio">
       <input  message="tns:consultarRelatorioInput"/>
@@ -47,7 +43,6 @@
     </operation>
   </portType>
 
-  <!-- Binding -->
   <binding name="RelatorioBinding" type="tns:RelatorioPortType">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="consultarRelatorio">
@@ -57,7 +52,6 @@
     </operation>
   </binding>
 
-  <!-- Service -->
   <service name="RelatorioService">
     <port name="RelatorioPort" binding="tns:RelatorioBinding">
       <soap:address location="http://localhost:9000/relatorio"/>

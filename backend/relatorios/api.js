@@ -147,7 +147,10 @@ const servico = {
     RelatorioService: {
         RelatorioPort: {
             consultarRelatorio: async (args) => {
-                return consultarRelatorio(args?.status || null, "soap");
+                const locacoes  = await buscarLocacoes();
+                const relatorio = gerarRelatorio(locacoes, args.status || null);
+                notificarClientes({ evento: "relatorio_consultado", relatorio });
+                return relatorio;
             }
         }
     }
