@@ -4,7 +4,7 @@ import LocacaoForm from './LocacaoForm';
 import Locacoes from './Locacoes';
 import { listLocacoes } from '../api';
 
-const RELATORIO_WS_URL = 'ws://localhost:9000';
+const RELATORIO_WS_URL = 'ws://localhost:8000/ws/relatorio';
 
 const relatorioInicial = {
   total: 0,

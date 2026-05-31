@@ -9,7 +9,7 @@ from .schemas import LocacaoOutSchema
 
 api = NinjaAPI()
 
-RELATORIOS_REFRESH_URL = "http://localhost:9000/api/relatorio/atualizar"
+RELATORIOS_REFRESH_URL = "http://localhost:8000/api/relatorio/atualizar"
 
 
 def notificar_relatorio(origem: str, status: str | None = None) -> None:

@@ -129,7 +129,7 @@ app.get("/api/relatorio", async (req, res) => {
 
 app.post("/api/relatorio/atualizar", async (req, res) => {
     try {
-        const snapshot = await criarSnapshot(req.body?.status || null, req.body?.origem || "event");
+        const snapshot = await criarSnapshot(null, req.body?.origem || "event");
         publicarSnapshot(snapshot);
 
         res.json({

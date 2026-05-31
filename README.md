@@ -71,7 +71,7 @@ Se o comando acima não funcionar, confirme que o ambiente virtual do backend es
 node api.js
 ```
 
-Execute esse comando dentro de `backend/relatorios` antes de abrir o frontend, porque o painel usa WebSocket em `ws://localhost:9000`.
+Execute esse comando dentro de `backend/relatorios` antes de abrir o frontend, porque a gateway recebe os eventos desse serviço e o painel usa WebSocket em `ws://localhost:8000/ws/relatorio`.
 
 5 - Rodar frontend
 

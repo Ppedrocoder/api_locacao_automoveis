@@ -1,8 +1,11 @@
 # main.py
 
+import asyncio
 import httpx
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from websockets import connect
+from websockets.exceptions import ConnectionClosed
 
 app = FastAPI(title="API Gateway")
 
@@ -18,7 +21,10 @@ app.add_middleware(
 SERVICES = {
     "veiculos":   "http://localhost:8001",
     "locacoes":   "http://localhost:8002",
+    "relatorios": "http://localhost:9000",
 }
+
+RELATORIOS_WS_URL = "ws://localhost:9000"
 
 def chamar_servico(service: str, method: str, path: str, body=None, params=None):
     base_url = SERVICES.get(service)
@@ -91,3 +97,49 @@ def cancelar_locacao(locacao_id: int):
 @app.delete("/api/locacoes/{locacao_id}")
 def deletar_locacao(locacao_id: int):
     return chamar_servico("locacoes", "DELETE", f"locacoes/{locacao_id}")
+
+
+# ── Relatórios ───────────────────────────────────────
+@app.get("/api/relatorio")
+def consultar_relatorio(status: str | None = None):
+    params = {"status": status} if status else None
+    return chamar_servico("relatorios", "GET", "relatorio", params=params)
+
+
+@app.post("/api/relatorio/atualizar")
+def atualizar_relatorio(payload: dict):
+    return chamar_servico("relatorios", "POST", "relatorio/atualizar", body=payload)
+
+
+@app.websocket("/ws/relatorio")
+async def proxy_relatorio_ws(client_ws: WebSocket):
+    await client_ws.accept()
+
+    try:
+        async with connect(RELATORIOS_WS_URL) as relatorio_ws:
+            async def cliente_para_relatorio():
+                while True:
+                    mensagem = await client_ws.receive_text()
+                    await relatorio_ws.send(mensagem)
+
+            async def relatorio_para_cliente():
+                while True:
+                    mensagem = await relatorio_ws.recv()
+                    if isinstance(mensagem, bytes):
+                        await client_ws.send_bytes(mensagem)
+                    else:
+                        await client_ws.send_text(mensagem)
+
+            await asyncio.gather(cliente_para_relatorio(), relatorio_para_cliente())
+
+    except WebSocketDisconnect:
+        pass
+    except ConnectionClosed:
+        pass
+    except Exception as erro:
+        print(f"[ERROR] Proxy websocket do relatório falhou: {erro}")
+
+    try:
+        await client_ws.close()
+    except Exception:
+        pass
