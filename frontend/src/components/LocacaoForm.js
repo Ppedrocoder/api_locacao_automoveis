@@ -10,13 +10,19 @@ export default function LocacaoForm({ onCreated }) {
   const [saving, setSaving] = useState(false);
   const [veiculos, setVeiculos] = useState([]);
   const [loadingVeiculos, setLoadingVeiculos] = useState(false);
+  const [erroVeiculos, setErroVeiculos] = useState('');
 
   const fetchVeiculos = async () => {
     setLoadingVeiculos(true);
+    setErroVeiculos('');
     try {
       const data = await listVeiculosDisponiveis();
       console.log('Veículos disponíveis carregados:', data);
-      const veiculos = Array.isArray(data) ? data : [];
+      if (!Array.isArray(data)) {
+        throw new Error(data?.error || 'Serviço de veículos indisponível');
+      }
+
+      const veiculos = data;
       setVeiculos(veiculos);
       if (veiculos.length > 0) {
         setVeiculoId(veiculos[0].id);
@@ -25,6 +31,9 @@ export default function LocacaoForm({ onCreated }) {
       }
     } catch (err) {
       console.error('Erro ao buscar veículos disponíveis', err);
+      setVeiculos([]);
+      setVeiculoId('');
+      setErroVeiculos(err.message || 'Não foi possível carregar os veículos disponíveis');
     } finally {
       setLoadingVeiculos(false);
     }
@@ -87,21 +96,25 @@ export default function LocacaoForm({ onCreated }) {
         {loadingVeiculos ? (
           <div className="locacao-form__hint">Carregando veículos...</div>
         ) : (
-          <select
-            className="locacao-form__control"
-            value={veiculoId}
-            onChange={e => setVeiculoId(e.target.value)}
-            required
-          >
-            <option value="" disabled>
-              Selecione um veículo
-            </option>
-            {veiculos.map((v) => (
-              <option key={v.id} value={v.id}>
-                {v.marca} {v.modelo}
+          <>
+            <select
+              className="locacao-form__control"
+              value={veiculoId}
+              onChange={e => setVeiculoId(e.target.value)}
+              required
+              disabled={veiculos.length === 0}
+            >
+              <option value="" disabled>
+                {veiculos.length === 0 ? 'Nenhum veículo disponível' : 'Selecione um veículo'}
               </option>
-            ))}
-          </select>
+              {veiculos.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.marca} {v.modelo}
+                </option>
+              ))}
+            </select>
+            {erroVeiculos ? <div className="locacao-form__hint">{erroVeiculos}</div> : null}
+          </>
         )}
       </div>
       <div className="locacao-form__field">

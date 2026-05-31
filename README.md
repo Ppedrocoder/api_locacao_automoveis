@@ -27,8 +27,14 @@ python -m venv {nome-do-ambiente}
 
 1 - No ambiente python
 
+APIs locacao, veiculo e gateway
 ```bash
 pip install -r requirements.txt
+```
+
+API de relatorios 
+```bash
+npm install
 ```
 
 2 - No frontend
@@ -54,10 +60,20 @@ python manage.py runserver 8002
 3 - Rodar api gateway
 
 ```bash
-uvicorn gateway:app --port 8000 --reload 
+python -m uvicorn gateway:app --port 8000 --reload
 ```
 
-4 - Rodar frontend
+Se o comando acima não funcionar, confirme que o ambiente virtual do backend está ativado antes de executar o gateway.
+
+4 - Rodar api relatórios
+
+```bash
+node api.js
+```
+
+Execute esse comando dentro de `backend/relatorios` antes de abrir o frontend, porque o painel usa WebSocket em `ws://localhost:9000`.
+
+5 - Rodar frontend
 
 ```bash
 npm start

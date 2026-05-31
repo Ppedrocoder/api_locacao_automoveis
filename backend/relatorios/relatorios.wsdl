@@ -1,0 +1,67 @@
+<definitions name="RelatorioService"
+  targetNamespace="http://relatorio.locacao"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:tns="http://relatorio.locacao"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <!-- Tipos -->
+  <types>
+    <xsd:schema>
+      <xsd:element name="consultarRelatorioRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="status" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="consultarRelatorioResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="total"      type="xsd:int"/>
+            <xsd:element name="reservados" type="xsd:int"/>
+            <xsd:element name="em_uso"     type="xsd:int"/>
+            <xsd:element name="devolvidos" type="xsd:int"/>
+            <xsd:element name="atrasados"  type="xsd:int"/>
+            <xsd:element name="cancelados" type="xsd:int"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </types>
+
+  <!-- Mensagens -->
+  <message name="consultarRelatorioInput">
+    <part name="parameters" element="tns:consultarRelatorioRequest"/>
+  </message>
+  <message name="consultarRelatorioOutput">
+    <part name="parameters" element="tns:consultarRelatorioResponse"/>
+  </message>
+
+  <!-- PortType -->
+  <portType name="RelatorioPortType">
+    <operation name="consultarRelatorio">
+      <input  message="tns:consultarRelatorioInput"/>
+      <output message="tns:consultarRelatorioOutput"/>
+    </operation>
+  </portType>
+
+  <!-- Binding -->
+  <binding name="RelatorioBinding" type="tns:RelatorioPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="consultarRelatorio">
+      <soap:operation soapAction="consultarRelatorio"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+    </operation>
+  </binding>
+
+  <!-- Service -->
+  <service name="RelatorioService">
+    <port name="RelatorioPort" binding="tns:RelatorioBinding">
+      <soap:address location="http://localhost:9000/relatorio"/>
+    </port>
+  </service>
+
+</definitions>

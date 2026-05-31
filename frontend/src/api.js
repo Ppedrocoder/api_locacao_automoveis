@@ -1,4 +1,5 @@
 const BASE = "http://localhost:8000";
+const RELATORIOS_BASE = "http://localhost:9000";
 
 async function request(method, url, body) {
   const opts = { method, headers: {} };
@@ -33,6 +34,10 @@ export async function listVeiculosDisponiveis() {
   return request('GET', `${BASE}/api/veiculos/disponiveis`);
 }
 
+export async function getRelatorio() {
+  return request('GET', `${RELATORIOS_BASE}/api/relatorio`);
+}
+
 export async function callLink(link) {
   if (!link || !link.href) throw new Error('Link inválido');
   return request(link.method || 'GET', link.href);
@@ -51,4 +56,4 @@ export async function updateVeiculoStatus(veiculoId, status) {
   }
 }
 
-export default { listLocacoes, createLocacao, listVeiculos, listVeiculosDisponiveis, callLink, updateVeiculoStatus };
+export default { listLocacoes, createLocacao, listVeiculos, listVeiculosDisponiveis, getRelatorio, callLink, updateVeiculoStatus };
