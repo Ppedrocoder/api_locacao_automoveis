@@ -5,7 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const { WebSocketServer, WebSocket } = require("ws");
 
-const app    = express();
+const app = express();
 const server = http.createServer(app);
 
 app.use(express.json());
@@ -105,42 +105,6 @@ function gerarRelatorio(locacoes, filtroStatus) {
         cancelados: filtradas.filter(l => l.status === "CANCELADO").length,
     };
 }
-
-async function consultarRelatorio(status = null, origem = "soap") {
-    const snapshot = await criarSnapshot(status, origem);
-
-    publicarSnapshot(snapshot);
-
-    return snapshot.relatorio;
-}
-
-app.get("/api/relatorio", async (req, res) => {
-    try {
-        const relatorio = await consultarRelatorio(req.query.status || null, "http");
-        res.json({
-            relatorio,
-            atualizadoEm: ultimoSnapshot ? ultimoSnapshot.atualizadoEm : new Date().toISOString(),
-        });
-    } catch (erro) {
-        console.error("Erro ao consultar relatório via HTTP:", erro);
-        res.status(500).json({ erro: "Não foi possível consultar o relatório." });
-    }
-});
-
-app.post("/api/relatorio/atualizar", async (req, res) => {
-    try {
-        const snapshot = await criarSnapshot(null, req.body?.origem || "event");
-        publicarSnapshot(snapshot);
-
-        res.json({
-            relatorio: snapshot.relatorio,
-            atualizadoEm: snapshot.atualizadoEm,
-        });
-    } catch (erro) {
-        console.error("Erro ao atualizar relatório via webhook:", erro);
-        res.status(500).json({ erro: "Não foi possível atualizar o relatório." });
-    }
-});
 
 // ── Serviço SOAP ──────────────────────────────────────
 const servico = {
