@@ -1,6 +1,9 @@
 # main.py
 
 import asyncio
+from zeep import Client
+from zeep.exceptions import Error as ZeepError
+import xml.etree.ElementTree as ET
 import httpx
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,6 +26,10 @@ SERVICES = {
     "locacoes":   "http://localhost:8002",
     "relatorios": "http://localhost:9000",
 }
+
+SOAP_WSDL = "http://localhost:9000/relatorio?wsdl"
+
+soap_client = Client(SOAP_WSDL)
 
 RELATORIOS_WS_URL = "ws://localhost:9000"
 
@@ -102,8 +109,22 @@ def deletar_locacao(locacao_id: int):
 # ── Relatórios ───────────────────────────────────────
 @app.get("/api/relatorio")
 def consultar_relatorio(status: str | None = None):
-    params = {"status": status} if status else None
-    return chamar_servico("relatorios", "GET", "relatorio", params=params)
+    return consultar_relatorio_soap(status)
+
+def consultar_relatorio_soap(status=None):
+    try:
+        resultado = soap_client.service.consultarRelatorio(status=status)
+        return dict(resultado)
+
+    except ZeepError as erro:
+        return {
+            "error": f"Erro SOAP: {str(erro)}"
+        }
+
+    except Exception as erro:
+        return {
+            "error": f"Falha ao consultar serviço de relatórios: {str(erro)}"
+        }
 
 
 @app.post("/api/relatorio/atualizar")
