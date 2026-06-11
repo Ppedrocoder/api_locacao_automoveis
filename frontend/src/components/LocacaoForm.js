@@ -43,53 +43,20 @@ export default function LocacaoForm({ onCreated }) {
     fetchVeiculos();
   }, []);
 
-  const confirmarCriacaoSilenciosa = async (payload) => {
-    try {
-      const locacoes = await listLocacoes();
-      if (!Array.isArray(locacoes)) {
-        return false;
-      }
-
-      return locacoes.some((locacao) => (
-        locacao.cliente === payload.cliente
-        && Number(locacao.veiculo_id) === Number(payload.veiculo_id)
-        && String(locacao.dia_inicial) === String(payload.dia_inicial)
-        && String(locacao.dia_final) === String(payload.dia_final)
-      ));
-    } catch {
-      return false;
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-
-    const payload = {
-      cliente,
-      veiculo_id: Number(veiculoId),
-      dia_inicial: diaInicial,
-      dia_final: diaFinal,
-    };
-
     try {
-      try {
-        await createLocacao(payload);
-      } catch (err) {
-        if (err.message === 'Failed to fetch' && await confirmarCriacaoSilenciosa(payload)) {
-          console.warn('Resposta de criação não chegou, mas a locação foi persistida.');
-        } else {
-          throw err;
-        }
-      }
+      await createLocacao({
+        cliente,
+        veiculo_id: Number(veiculoId),
+        dia_inicial: diaInicial,
+        dia_final: diaFinal,
+      });
 
-      // Se essa atualização falhar, a locação já foi criada e não deve aparecer como erro total.
-      try {
-        await updateVeiculoStatus(Number(veiculoId), 'Alugado');
-      } catch (err) {
-        console.warn('Locação criada, mas não foi possível atualizar o status do veículo.', err);
-      }
-      
+      // Atualizar status do veículo para "Alugado"
+      await updateVeiculoStatus(Number(veiculoId), 'Alugado');
+
       setCliente('');
       setDiaInicial('');
       setDiaFinal('');
@@ -97,7 +64,7 @@ export default function LocacaoForm({ onCreated }) {
       if (onCreated) onCreated();
     } catch (err) {
       console.error('Erro ao criar locação', err);
-      alert(`Erro ao criar locação: ${err.message || 'falha inesperada'}`);
+      alert('Erro ao criar locação');
     } finally {
       setSaving(false);
     }
